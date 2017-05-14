@@ -854,8 +854,10 @@ mktempdir() do dir
             end
             LibGit2.add!(our_repo, "file1")
             LibGit2.commit(our_repo, "add file1")
-            # we cannot yet locally push to non-bare repos
-            @test_throws LibGit2.GitError LibGit2.push(our_repo, remoteurl=up_path)
+            if LibGit2.version() > v"0.25.1" # See #21639 and #21597
+                # we cannot yet locally push to non-bare repos
+                @test_throws LibGit2.GitError LibGit2.push(our_repo, remoteurl=up_path)
+            end
         finally
             close(our_repo)
             close(up_repo)
